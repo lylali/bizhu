@@ -40,28 +40,30 @@ var __setFunctionName = (this && this.__setFunctionName) || function (f, name, p
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrismaService = void 0;
 const common_1 = require("@nestjs/common");
+const client_1 = require("@prisma/client");
 let PrismaService = (() => {
     let _classDecorators = [(0, common_1.Injectable)()];
     let _classDescriptor;
     let _classExtraInitializers = [];
     let _classThis;
-    var PrismaService = _classThis = class {
-        constructor(configService) {
-            this.configService = configService;
+    let _classSuper = client_1.PrismaClient;
+    var PrismaService = _classThis = class extends _classSuper {
+        constructor() {
+            super(...arguments);
             this.logger = new common_1.Logger('PrismaService');
         }
         async onModuleInit() {
-            // TODO: Initialize Prisma client after schema is defined
-            this.logger.log('Prisma initialized');
+            await this.$connect();
+            this.logger.log('Prisma connected to database');
         }
         async onModuleDestroy() {
-            // TODO: Disconnect Prisma client
-            this.logger.log('Prisma disconnected');
+            await this.$disconnect();
+            this.logger.log('Prisma disconnected from database');
         }
     };
     __setFunctionName(_classThis, "PrismaService");
     (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
+        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(_classSuper[Symbol.metadata] ?? null) : void 0;
         __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
         PrismaService = _classThis = _classDescriptor.value;
         if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });

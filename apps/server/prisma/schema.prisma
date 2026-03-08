@@ -7,4 +7,190 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// TODO: Add models here
+// 用户表 - 支持微信登录
+model User {
+  id              String   @id @default(cuid())
+  
+  // 微信 OAuth 字段
+  wechatOpenId    String?  @unique
+  wechatUnionId   String?  @unique
+  nickname        String
+  avatarUrl       String?
+  
+  // 时间戳
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // 关系
+  works           Work[]
+}
+
+// 作品表
+model Work {
+  id              String   @id @default(cuid())
+  authorId        String
+  author          User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // 基本信息
+  title           String
+  description     String?
+  type            String   // 长篇 | 短篇 | 剧本 | 短剧
+  status          String   @default("draft") // draft | publishing | completed
+  coverId         String?  // 封面ID或URL
+  
+  // 时间戳
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // 关系
+  chapters        Chapter[]
+  characters      Character[]
+  outlineNodes    OutlineNode[]
+  foreshadows     Foreshadow[]
+  characterRelations CharacterRelation[]
+  
+  @@index([authorId])
+}
+
+// 章节表
+model Chapter {
+  id              String   @id @default(cuid())
+  workId          String
+  work            Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+  
+  // 基本信息
+  title           String
+  order           Int      // 章节序号
+  wordCount       Int      @default(0)
+  publishStatus   String   @default("draft") // draft | published | archived
+  
+  // 内容存储
+  // yjsDoc: Yjs Y.Doc 的二进制序列化，用于实时协作编辑
+  yjsDoc          Bytes?
+  
+  // textSnapshot: 纯文本快照，用于搜索和字数统计
+  textSnapshot    String?
+  
+  // 时间戳
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // 关系
+  foreshadows     Foreshadow[] @relation("PlantedIn")
+  resolveForeshadows Foreshadow[] @relation("ResolvedIn")
+  outlineNode     OutlineNode?
+  
+  @@index([workId])
+  @@index([order])
+}
+
+// 角色卡表
+model Character {
+  id              String   @id @default(cuid())
+  workId          String
+  work            Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+  
+  // 基本信息
+  name            String
+  description     String?
+  appearance      String?  // 外貌描写
+  personality     String?  // 性格描述
+  
+  // 关系图布局坐标
+  positionX       Float    @default(0)
+  positionY       Float    @default(0)
+  
+  // 时间戳
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // 关系
+  relationsFrom   CharacterRelation[] @relation("FromCharacter")
+  relationsTo     CharacterRelation[] @relation("ToCharacter")
+  
+  @@index([workId])
+  @@unique([workId, name])
+}
+
+// 角色关系表
+model CharacterRelation {
+  id              String   @id @default(cuid())
+  workId          String
+  work            Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+  
+  // 关系端点
+  fromId          String
+  from            Character @relation("FromCharacter", fields: [fromId], references: [id], onDelete: Cascade)
+  
+  toId            String
+  to              Character @relation("ToCharacter", fields: [toId], references: [id], onDelete: Cascade)
+  
+  // 关系类型
+  relationType    String   // 朋友 | 敌人 | 师徒 | 恋人 | 同事等
+  
+  // 时间戳
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([workId])
+  @@index([fromId])
+  @@index([toId])
+}
+
+// 大纲节点表 - 树形结构
+model OutlineNode {
+  id              String   @id @default(cuid())
+  workId          String
+  work            Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+  
+  // 树形结构
+  parentId        String?
+  parent          OutlineNode? @relation("Children", fields: [parentId], references: [id], onDelete: Cascade)
+  children        OutlineNode[] @relation("Children")
+  
+  // 内容
+  title           String
+  content         String?
+  order           Int      @default(0)
+  
+  // 可选关联章节
+  chapterId       String?  @unique
+  chapter         Chapter? @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  
+  // 时间戳
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([workId])
+  @@index([parentId])
+  @@index([order])
+}
+
+// 伏笔表
+model Foreshadow {
+  id              String   @id @default(cuid())
+  workId          String
+  work            Work     @relation(fields: [workId], references: [id], onDelete: Cascade)
+  
+  // 伏笔描述
+  description     String
+  
+  // 埋设位置
+  plantedChapterId String?
+  plantedChapter  Chapter? @relation("PlantedIn", fields: [plantedChapterId], references: [id], onDelete: SetNull)
+  
+  // 预计回收位置
+  expectedResolveChapterId String?
+  expectedResolveChapter Chapter? @relation("ResolvedIn", fields: [expectedResolveChapterId], references: [id], onDelete: SetNull)
+  
+  // 状态
+  isResolved      Boolean  @default(false)
+  
+  // 时间戳
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([workId])
+  @@index([plantedChapterId])
+  @@index([expectedResolveChapterId])
+}
