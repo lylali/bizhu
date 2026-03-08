@@ -57,7 +57,7 @@ export function EditorCore({ content = '', onChange }: EditorCoreProps) {
       <Toolbar editor={editor} />
       <div className="flex-1 overflow-auto">
         <div className="max-w-[680px] mx-auto">
-          <EditorContent editor={editor} />
+          <EditorContent editor={editor} data-testid="editor-content" />
         </div>
       </div>
       <StatusBar editor={editor} />
