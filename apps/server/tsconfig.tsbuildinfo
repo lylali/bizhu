@@ -1,0 +1,1 @@
+{"root":["./src/app.module.ts","./src/main.ts","./src/common/filters/exception.filter.ts","./src/common/interceptors/response.interceptor.ts","./src/prisma/prisma.module.ts","./src/prisma/prisma.service.ts"],"version":"5.9.3"}
