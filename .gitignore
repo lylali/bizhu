@@ -1,0 +1,26 @@
+# Node
+node_modules/
+/dist/
+
+# pnpm
+.pnpm-debug.log
+
+# Tauri
+src-tauri/target/
+src-tauri/build/
+
+# React Native
+android/
+ios/
+.expo/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Environment
+.env
+.env.local
+.env.*.local
