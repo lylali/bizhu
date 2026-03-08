@@ -36,6 +36,9 @@ importers:
       '@prisma/client':
         specifier: ^5.8.0
         version: 5.22.0(prisma@5.22.0)
+      '@shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
@@ -129,7 +132,14 @@ importers:
         specifier: ^5.0.0
         version: 5.4.21(@types/node@20.19.37)(terser@5.46.0)
 
-  packages/shared: {}
+  packages/shared:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.19.37
+        version: 20.19.37
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 

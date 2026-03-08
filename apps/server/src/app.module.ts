@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
+import { WritingModule } from './modules/writing/writing.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { ExceptionFilter } from './common/filters/exception.filter';
 
@@ -12,6 +13,7 @@ import { ExceptionFilter } from './common/filters/exception.filter';
       envFilePath: '.env',
     }),
     PrismaModule,
+    WritingModule,
   ],
   providers: [
     {

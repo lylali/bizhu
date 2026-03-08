@@ -10,6 +10,7 @@
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
+    "@shared": "workspace:*",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/config": "^3.0.0",
