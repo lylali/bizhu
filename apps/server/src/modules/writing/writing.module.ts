@@ -4,6 +4,8 @@ import { ChapterController } from './chapter.controller';
 import { ChapterService } from './chapter.service';
 import { YjsService } from './yjs.service';
 import { YjsGateway } from './yjs.gateway';
+import { OutlineController } from './outline.controller';
+import { OutlineService } from './outline.service';
 
 @Module({
   imports: [
@@ -12,8 +14,8 @@ import { YjsGateway } from './yjs.gateway';
       signOptions: { expiresIn: '24h' },
     }),
   ],
-  controllers: [ChapterController],
-  providers: [ChapterService, YjsService, YjsGateway],
-  exports: [ChapterService, YjsService],
+  controllers: [ChapterController, OutlineController],
+  providers: [ChapterService, YjsService, YjsGateway, OutlineService],
+  exports: [ChapterService, YjsService, OutlineService],
 })
 export class WritingModule {}
