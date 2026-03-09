@@ -50,8 +50,15 @@ packages/shared - 共享类型和工具
 - 断网时本地编辑，重连自动追赶
 - chapterStore 管理保存状态（SavingStatus 枚举）
 
+✅ **大纲管理（Outline）**
+- OutlineNode 树形结构（parentId 自关联）
+- 完整 REST API：GET/POST/PATCH/DELETE + 批量 reorder
+- 递归树构建（一次查询返回完整树）
+- 级联删除子节点（Prisma onDelete: Cascade）
+- 批量 reorder 用事务保证原子性
+- 可选关联到章节（支持「大纲 + 章节」混合工作流）
+
 ### 进行中
-- 大纲功能（树形结构、拖拽排序）
 - 角色卡管理（CRUD + 关系图）
 
 ## 重要约束
