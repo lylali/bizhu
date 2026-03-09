@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import CharacterCount from '@tiptap/extension-character-count';
@@ -6,6 +6,8 @@ import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
+import { useChapterStore, type SavingStatus } from '../../stores/chapterStore';
+import * as api from '../../api';
 
 export type ConnectionStatus = 'synced' | 'syncing' | 'offline';
 
@@ -24,6 +26,51 @@ export function useEditorInstance({
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('offline');
   const [isMounted, setIsMounted] = useState(false);
   const wsProvider = useRef<WebsocketProvider | null>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasPendingChangesRef = useRef(false);
+
+  // 使用 Zustand 存储
+  const { currentChapter, setSavingStatus, setLastSavedAt, setSaveError } = useChapterStore();
+
+  // 手动保存函数（绕过 debounce）
+  const forceSave = useCallback(async () => {
+    if (!chapterId || !currentChapter?.workId) return;
+
+    try {
+      setSavingStatus('saving');
+      const content = ydoc.getText('content').toString();
+      
+      await api.chapterApi.saveChapterContent(currentChapter.workId, chapterId, {
+        content,
+        textSnapshot: content,
+      });
+
+      setLastSavedAt(new Date());
+      setSavingStatus(connectionStatus === 'offline' ? 'offline' : 'idle');
+      setSaveError(null);
+      hasPendingChangesRef.current = false;
+    } catch (error) {
+      console.error('Failed to save chapter:', error);
+      setSavingStatus('error');
+      setSaveError(error instanceof Error ? error.message : 'Save failed');
+    }
+  }, [chapterId, currentChapter?.workId, ydoc, setSavingStatus, setLastSavedAt, setSaveError, connectionStatus]);
+
+  // 30秒 debounce 自动保存
+  const scheduleAutoSave = useCallback(() => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    hasPendingChangesRef.current = true;
+    setSavingStatus('saving');
+
+    saveTimeoutRef.current = setTimeout(() => {
+      if (hasPendingChangesRef.current) {
+        forceSave();
+      }
+    }, 30000); // 30 seconds
+  }, [forceSave, setSavingStatus]);
 
   // 初始化 WebSocket 提供商
   useEffect(() => {
@@ -59,14 +106,24 @@ export function useEditorInstance({
       const updateStatus = () => {
         if (!wsProvider.current) return;
 
+        let newStatus: ConnectionStatus;
         if (wsProvider.current.shouldConnect) {
           if (wsProvider.current.ws && wsProvider.current.ws.readyState === WebSocket.OPEN) {
-            setConnectionStatus('synced');
+            newStatus = 'synced';
           } else {
-            setConnectionStatus('syncing');
+            newStatus = 'syncing';
           }
         } else {
-          setConnectionStatus('offline');
+          newStatus = 'offline';
+        }
+
+        setConnectionStatus(newStatus);
+
+        // 更新保存状态
+        if (newStatus === 'offline') {
+          setSavingStatus('offline');
+        } else if (newStatus === 'synced' && hasPendingChangesRef.current) {
+          forceSave();
         }
       };
 
@@ -81,6 +138,11 @@ export function useEditorInstance({
         const content = ydoc.getText('content').toString();
         localStorage.setItem(`chapter-content-${chapterId}`, content);
         onChange?.(content);
+        
+        // 触发自动保存
+        if (connectionStatus !== 'offline') {
+          scheduleAutoSave();
+        }
       };
       ydoc.getText('content').observe(handleChange);
 
@@ -90,7 +152,7 @@ export function useEditorInstance({
     } catch (error) {
       console.error('Failed to initialize Yjs WebSocket provider:', error);
     }
-  }, [ydoc, chapterId, token, isMounted, onChange]);
+  }, [ydoc, chapterId, token, isMounted, onChange, connectionStatus, scheduleAutoSave, setSavingStatus, forceSave]);
 
   // 在组件挂载时标记为已挂载
   useEffect(() => {
@@ -99,6 +161,21 @@ export function useEditorInstance({
       setIsMounted(false);
     };
   }, []);
+
+  // 监听 Ctrl+S 快捷键
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        forceSave();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [forceSave]);
 
   const editor = useEditor({
     extensions: [
@@ -148,6 +225,9 @@ export function useEditorInstance({
       if (wsProvider.current) {
         wsProvider.current.destroy();
       }
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
       // 不销毁 ydoc，因为它可能被其他组件使用
     };
   }, []);
@@ -170,5 +250,6 @@ export function useEditorInstance({
     editor,
     connectionStatus,
     ydoc,
+    forceSave,
   };
 }

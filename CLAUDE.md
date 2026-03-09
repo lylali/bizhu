@@ -30,6 +30,22 @@ packages/shared - 共享类型和工具
 专注创作工具核心：编辑器 + 大纲 + 角色卡 + 云同步
 暂不做：变现、AI功能、读者端
 
+### 已完成（2026/03/09）
+✅ **编辑器 + Yjs 实时同步**
+- Tiptap v2.27.2 编辑器集成
+- Yjs CRDT 多客户端同步
+- WebSocket 实时协作（后端 NestJS gateway）
+- JWT 认证的 WebSocket 连接
+- 连接状态显示（🟢 已同步 / 🟡 同步中 / 🔴 离线）
+- 离线编辑支持（localStorage 本地缓存，容量 5-10MB，满足网文场景）
+- 多 Tab 同步（Yjs 共享文档状态）
+- 30秒 debounce 落库到 PostgreSQL
+- 中文输入稳定（IME composition 事件处理）
+
+### 进行中
+- 大纲功能（树形结构、拖拽排序）
+- 角色卡管理（CRUD + 关系图）
+
 ## 重要约束
 - 内容不用于训练AI，体现在隐私策略和代码注释中
 - 支付接阿里云/微信支付，不用Stripe

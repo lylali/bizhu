@@ -11,7 +11,7 @@ interface EditorCoreProps {
 }
 
 export function EditorCore({ chapterId, token, onChange }: EditorCoreProps) {
-  const { editor, connectionStatus } = useEditorInstance({
+  const { editor, connectionStatus, forceSave } = useEditorInstance({
     chapterId,
     token,
     onChange,
@@ -35,7 +35,11 @@ export function EditorCore({ chapterId, token, onChange }: EditorCoreProps) {
           <EditorContent editor={editor} data-testid="editor-content" />
         </div>
       </div>
-      <StatusBar editor={editor} connectionStatus={connectionStatus} />
+      <StatusBar
+        editor={editor}
+        connectionStatus={connectionStatus}
+        onRetry={forceSave}
+      />
     </div>
   );
 }

@@ -2,26 +2,24 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import type { Chapter } from '@shared';
 
+export type SavingStatus = 'idle' | 'saving' | 'offline' | 'error';
+
 interface ChapterState {
   // 当前编辑的章节
   currentChapter: Chapter | null;
   setCurrentChapter: (chapter: Chapter | null) => void;
 
-  // 保存状态
-  isSaving: boolean;
-  setIsSaving: (saving: boolean) => void;
+  // 保存状态：idle（已保存）| saving（同步中）| offline（离线）| error（保存失败）
+  savingStatus: SavingStatus;
+  setSavingStatus: (status: SavingStatus) => void;
 
   // 最后保存时间
   lastSavedAt: Date | null;
   setLastSavedAt: (date: Date | null) => void;
 
-  // 未保存的变更标记
-  hasUnsavedChanges: boolean;
-  setHasUnsavedChanges: (hasChanges: boolean) => void;
-
-  // 错误信息
-  error: string | null;
-  setError: (error: string | null) => void;
+  // 保存错误信息
+  saveError: string | null;
+  setSaveError: (error: string | null) => void;
 
   // 清空状态
   reset: () => void;
@@ -29,10 +27,9 @@ interface ChapterState {
 
 const initialState = {
   currentChapter: null,
-  isSaving: false,
+  savingStatus: 'idle' as SavingStatus,
   lastSavedAt: null,
-  hasUnsavedChanges: false,
-  error: null,
+  saveError: null,
 };
 
 export const useChapterStore = create<ChapterState>()(
@@ -43,13 +40,11 @@ export const useChapterStore = create<ChapterState>()(
 
         setCurrentChapter: (chapter) => set({ currentChapter: chapter }),
 
-        setIsSaving: (saving) => set({ isSaving: saving }),
+        setSavingStatus: (status) => set({ savingStatus: status }),
 
         setLastSavedAt: (date) => set({ lastSavedAt: date }),
 
-        setHasUnsavedChanges: (hasChanges) => set({ hasUnsavedChanges: hasChanges }),
-
-        setError: (error) => set({ error }),
+        setSaveError: (error) => set({ saveError: error }),
 
         reset: () => set(initialState),
       }),
@@ -58,6 +53,7 @@ export const useChapterStore = create<ChapterState>()(
         partialize: (state) => ({
           currentChapter: state.currentChapter,
           lastSavedAt: state.lastSavedAt,
+          savingStatus: state.savingStatus,
         }),
       }
     ),
