@@ -42,6 +42,14 @@ packages/shared - 共享类型和工具
 - 30秒 debounce 落库到 PostgreSQL
 - 中文输入稳定（IME composition 事件处理）
 
+✅ **自动保存 UI 反馈**
+- StatusBar 显示四种保存状态：已保存 · X分钟前 / 同步中 / 离线 · 本地保存 / 保存失败
+- 相对时间显示（dayjs 中文本地化，每分钟自动更新）
+- Ctrl+S 手动强制保存（绕过 debounce 立即上传）
+- 保存失败时可点击重试
+- 断网时本地编辑，重连自动追赶
+- chapterStore 管理保存状态（SavingStatus 枚举）
+
 ### 进行中
 - 大纲功能（树形结构、拖拽排序）
 - 角色卡管理（CRUD + 关系图）
