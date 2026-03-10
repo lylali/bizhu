@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
+const cache_manager_1 = require("@nestjs/cache-manager");
 const core_1 = require("@nestjs/core");
 const prisma_module_1 = require("./prisma/prisma.module");
 const writing_module_1 = require("./modules/writing/writing.module");
@@ -23,6 +24,10 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 envFilePath: '.env',
+            }),
+            cache_manager_1.CacheModule.register({
+                isGlobal: true,
+                ttl: 3600000, // 1小时默认TTL
             }),
             prisma_module_1.PrismaModule,
             writing_module_1.WritingModule,

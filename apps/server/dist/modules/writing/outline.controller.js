@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OutlineController = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
 const outline_service_1 = require("./outline.service");
 const outline_dto_1 = require("./dto/outline.dto");
 let OutlineController = class OutlineController {
@@ -105,6 +106,7 @@ __decorate([
 ], OutlineController.prototype, "reorderNodes", null);
 exports.OutlineController = OutlineController = __decorate([
     (0, common_1.Controller)('works/:workId/outline'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [outline_service_1.OutlineService])
 ], OutlineController);
 //# sourceMappingURL=outline.controller.js.map

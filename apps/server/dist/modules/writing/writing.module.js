@@ -15,6 +15,8 @@ const yjs_service_1 = require("./yjs.service");
 const yjs_gateway_1 = require("./yjs.gateway");
 const outline_controller_1 = require("./outline.controller");
 const outline_service_1 = require("./outline.service");
+const work_controller_1 = require("./work.controller");
+const work_service_1 = require("./work.service");
 let WritingModule = class WritingModule {
 };
 exports.WritingModule = WritingModule;
@@ -26,9 +28,9 @@ exports.WritingModule = WritingModule = __decorate([
                 signOptions: { expiresIn: '24h' },
             }),
         ],
-        controllers: [chapter_controller_1.ChapterController, outline_controller_1.OutlineController],
-        providers: [chapter_service_1.ChapterService, yjs_service_1.YjsService, yjs_gateway_1.YjsGateway, outline_service_1.OutlineService],
-        exports: [chapter_service_1.ChapterService, yjs_service_1.YjsService, outline_service_1.OutlineService],
+        controllers: [chapter_controller_1.ChapterController, outline_controller_1.OutlineController, work_controller_1.WorkController],
+        providers: [chapter_service_1.ChapterService, yjs_service_1.YjsService, yjs_gateway_1.YjsGateway, outline_service_1.OutlineService, work_service_1.WorkService],
+        exports: [chapter_service_1.ChapterService, yjs_service_1.YjsService, outline_service_1.OutlineService, work_service_1.WorkService],
     })
 ], WritingModule);
 //# sourceMappingURL=writing.module.js.map

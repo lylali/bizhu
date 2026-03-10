@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Dashboard from './pages/Dashboard';
 import Editor from './pages/Editor';
 import Character from './pages/Character';
+import CreateWork from './pages/CreateWork';
 
 function AppContent(): JSX.Element {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ function AppContent(): JSX.Element {
   return (
     <Routes>
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/editor/new" element={<CreateWork />} />
       <Route path="/editor/:workId" element={<Editor />} />
       <Route path="/character/:workId" element={<Character />} />
       <Route path="/login" element={<div>登录页面（待实现）</div>} />

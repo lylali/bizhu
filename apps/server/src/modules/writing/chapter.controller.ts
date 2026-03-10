@@ -8,6 +8,7 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { ChapterService } from './chapter.service';
 import {
   CreateChapterRequest,
@@ -19,6 +20,7 @@ import {
 } from '@shared';
 
 @Controller('works/:workId/chapters')
+@UseGuards(JwtAuthGuard)
 export class ChapterController {
   constructor(private readonly chapterService: ChapterService) {}
 

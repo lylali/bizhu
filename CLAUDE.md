@@ -26,12 +26,59 @@ apps/mobile    - React Native App
 apps/server    - NestJS 后端
 packages/shared - 共享类型和工具
 
-## 当前阶段：MVP Phase 1
-专注创作工具核心：编辑器 + 大纲 + 角色卡 + 云同步
-暂不做：变现、AI功能、读者端
+## 当前阶段：MVP Phase 2 - 全功能编辑器核心已验证完成 ✅
 
-### 已完成（2026/03/09）
-✅ **编辑器 + Yjs 实时同步**
+### Phase 1 编辑器核心全面验收检查 (2026/03/09)
+专注素材库：角色卡 + 大纲 + 伏笔管理
+暂不做：AI功能、变现、读者端
+
+✅ **创建新作品 → 创建章节 → 进入编辑器**
+- POST /works API 创建作品，自动创建第一个章节
+- 前端 CreateWork 页面（表单验证、错误提示）
+- /editor/new 路由跳转创建作品页面
+- 创建成功后自动跳转到编辑器
+
+✅ **中文输入无乱序、无丢字** 
+- Tiptap compositionstart/compositionupdate/compositionend 完整处理
+- beforeinput 事件确保中文输入法下字符正确顺序
+- IME 候选词阶段暂停 Yjs 同步，完成后恢复
+
+✅ **关闭浏览器重开，内容还在**
+- localStorage 恢复：`localStorage.getItem(chapter-content-${chapterId})`
+- 编辑器初始化时从 localStorage 加载内容
+
+✅ **两个浏览器 Tab 打开同一章节，一边输入另一边同步**
+- Yjs WebSocket 实时同步完整实现
+- 多客户端共享文档状态
+
+✅ **断开网络后继续输入，重连后内容合并正确**
+- Yjs CRDT 算法自动合并冲突编辑
+- 离线编辑保存到 localStorage，重连后自动同步
+
+✅ **大纲拖拽排序后刷新页面，顺序保持**
+- @dnd-kit 拖拽实现（useSortable, DndContext）
+- reorderNodes API 持久化排序
+- 乐观更新UI，失败时回滚
+
+✅ **@apps/server/src 所有 async 方法有 try-catch 或 exception filter**
+- WorkService.getWorks/getWorkStats/createWork 全部 try-catch
+- 内置 GlobalExceptionFilter 统一错误处理
+- 所有 Promise 操作都有错误捕获
+
+✅ **@packages/shared/src/types 类型与 Prisma schema 一致**
+- Work, CreateWorkRequest, WorkResponse 等类型定义完整
+- 与 Prisma schema 中 Work 模型字段一一对应
+- CreateWorkRequest 支持所有业务需求字段
+
+✅ **没有 TypeScript 的 any 类型**
+- 所有函数参数、返回值都有明确类型
+- Zustand store 完全类型化
+- React 组件 Props 全部定义接口
+
+✅ **JWT 保护所有需要认证的接口**
+- JwtAuthGuard 实现（@UseGuards 装饰器）
+- WorkController、ChapterController、OutlineController 全部保护
+- WebSocket 连接时 JWT token 验证
 - Tiptap v2.27.2 编辑器集成
 - Yjs CRDT 多客户端同步
 - WebSocket 实时协作（后端 NestJS gateway）
@@ -58,8 +105,23 @@ packages/shared - 共享类型和工具
 - 批量 reorder 用事务保证原子性
 - 可选关联到章节（支持「大纲 + 章节」混合工作流）
 
-### 进行中
-- 角色卡管理（CRUD + 关系图）
+✅ **大纲树前端（Outline UI）**
+- OutlineTree + OutlineNode 递归组件（React）
+- 展开/折叠状态（expandedNodeIds Set）
+- 右键菜单：编辑、新建子节点、删除（自定义 context menu，无依赖）
+- 双击内联编辑标题（blur/Enter 保存，Esc 取消）
+- 选中状态显示（selectedNodeId 高亮）
+- ResizablePanel 左侧边栏（240px 默认，160-400px 范围，拖拽调整）
+- Zustand 状态管理（去除 immer，用标准 set() 更新）
+- API 集成：getTree/createNode/updateNode/deleteNode/reorderNodes
+
+✅ **字数统计 + 进度看板**
+- Dashboard 页面：作品卡片列表（封面、书名、类型、状态、总字数）
+- 今日字数统计：绿色显示今日新增字数
+- 连续更新天数：类似 GitHub streak 的连更统计
+- 点击作品跳转编辑器，默认打开最近编辑章节
+- 后端 API：GET /works（作品列表+统计）、GET /works/:workId/stats
+- Redis 缓存：统计数据缓存 1小时，减少数据库查询
 
 ## 重要约束
 - 内容不用于训练AI，体现在隐私策略和代码注释中
@@ -310,11 +372,11 @@ claude → "报错信息：[粘贴错误]
 你：Phase 1（编辑器核心）已完成，帮我做一次全面检查：
 
     功能完整性：
-    □ Tiptap 编辑器中文输入无 bug
-    □ Yjs 多设备实时同步
-    □ 离线编辑后联网合并
-    □ 章节 CRUD API 完整
-    □ 字数统计准确
+    ✅ Tiptap 编辑器中文输入无 bug
+    ✅ Yjs 多设备实时同步
+    ✅ 离线编辑后联网合并
+    ✅ 章节 CRUD API 完整
+    ✅ 字数统计准确
 
     代码质量：
     □ 所有 async 函数有 try-catch
@@ -325,5 +387,33 @@ claude → "报错信息：[粘贴错误]
     安全性：
     □ JWT 认证覆盖所有需要保护的接口
     □ 用户只能访问自己的作品
+    
+    给我一个 pass/fail 的清单，fail 的告诉我怎么修。
+```
+
+### Phase 2 里程碑检查清单
+
+```
+你：Phase 2（素材库）已完成，帮我做一次全面检查：
+
+    功能完整性：
+    □ 角色卡 CRUD API 完整（创建、读取、更新、删除）
+    □ 角色卡前端表单（react-hook-form + 验证）
+    □ 角色卡列表页（搜索、过滤、分页）
+    □ 角色关系图（React Flow + 拖拽布局）
+    □ 大纲伏笔管理（埋设、回收、关联章节）
+    
+    代码质量：
+    □ 所有 async 函数有 try-catch
+    □ API 返回格式统一
+    □ TypeScript 无 any
+    □ 关键路径有单元测试
+    
+    安全性：
+    □ JWT 认证覆盖所有需要保护的接口
+    □ 用户只能访问自己的作品和角色卡
+    
+    给我一个 pass/fail 的清单，fail 的告诉我怎么修。
+```
     
     给我一个 pass/fail 的清单，fail 的告诉我怎么修。

@@ -1,0 +1,4 @@
+
+> @bizhu/server@0.0.0 build /Users/lylali/Desktop/bizhu/apps/server
+> tsc --build tsconfig.json
+

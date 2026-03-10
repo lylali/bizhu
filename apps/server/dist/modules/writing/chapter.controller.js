@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChapterController = void 0;
 const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
 const chapter_service_1 = require("./chapter.service");
 let ChapterController = class ChapterController {
     constructor(chapterService) {
@@ -91,6 +92,7 @@ __decorate([
 ], ChapterController.prototype, "saveChapterContent", null);
 exports.ChapterController = ChapterController = __decorate([
     (0, common_1.Controller)('works/:workId/chapters'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __metadata("design:paramtypes", [chapter_service_1.ChapterService])
 ], ChapterController);
 //# sourceMappingURL=chapter.controller.js.map

@@ -7,7 +7,9 @@ import {
   Body,
   Param,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { OutlineService } from './outline.service';
 import {
   CreateOutlineNodeDto,
@@ -18,6 +20,7 @@ import {
 } from './dto/outline.dto';
 
 @Controller('works/:workId/outline')
+@UseGuards(JwtAuthGuard)
 export class OutlineController {
   constructor(private outlineService: OutlineService) {}
 

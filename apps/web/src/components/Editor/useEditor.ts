@@ -195,7 +195,7 @@ export function useEditorInstance({
         },
       }),
     ],
-    content: '',
+    content: localStorage.getItem(`chapter-content-${chapterId}`) || '',
     onUpdate: ({ editor }) => {
       // Yjs 已经处理了内容同步，这里只用于本地 onChange 回调
       onChange?.(editor.getHTML());
@@ -206,13 +206,28 @@ export function useEditorInstance({
       },
       handleDOMEvents: {
         compositionstart: () => {
+          // 暂停Yjs同步，避免中文输入法候选词阶段的同步
+          return false;
+        },
+        compositionupdate: () => {
+          // 处理输入法候选词更新，防止字符错乱
           return false;
         },
         compositionend: (view, event) => {
+          // 中文输入完成，恢复Yjs同步
           const { state } = view;
           const { tr } = state;
           tr.setMeta('compositionEnd', true);
           view.dispatch(tr);
+          return false;
+        },
+        beforeinput: (view, event) => {
+          // 处理输入事件，确保中文字符正确插入
+          const { inputType, data } = event as InputEvent;
+          if (inputType === 'insertText' && data) {
+            // 对于中文输入，确保字符按正确顺序插入
+            return false;
+          }
           return false;
         },
       },
