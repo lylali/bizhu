@@ -1,6 +1,6 @@
 # 笔主 (BizhuPlatform)
 
-A creation & monetization platform for Chinese web novel writers.
+A creation & monetization platform for writers.
 
 ---
 
@@ -8,7 +8,7 @@ A creation & monetization platform for Chinese web novel writers.
 
 ### 简介
 
-笔主是为网文作者打造的创作工具和变现平台。集成高效的章节编辑器、素材库管理、实时同步等功能，帮助作者专注于创意写作。
+笔主是为写作者打造的创作工具和变现平台。集成高效的章节编辑器、素材库管理、实时同步等功能，帮助作者专注于创意写作。
 
 ### 技术栈
 
@@ -47,10 +47,29 @@ pnpm build
 
 ### 核心功能
 
-- **章节编辑**: 实时协作编辑、自动保存、Markdown 支持
-- **角色管理**: 角色卡、属性编辑、关系图可视化
-- **素材库**: 伏笔、大纲、标签管理
-- **实时同步**: 多端同步、离线编辑
+#### 章节编辑器
+- 富文本编辑器，支持 Markdown 语法
+- 实时自动保存功能
+- 多端实时同步（Web、桌面、移动）
+- 字数统计和编辑进度跟踪
+
+#### 角色管理
+- 完整的角色卡系统（姓名、外貌、性格、背景、标签等）
+- 角色关系图可视化展示
+- 支持角色属性编辑和版本管理
+- 快速角色搜索和过滤
+
+#### 素材库
+- 伏笔管理：埋设、回收、进度跟踪
+- 大纲编辑：章节规划、情节梗概
+- 标签系统：灵活分类和组织素材
+- 素材搜索和关联查询
+
+#### 实时同步
+- Yjs 驱动的实时协作编辑
+- 自动冲突解决
+- 离线编辑支持
+- 无缝的多端同步
 
 ---
 
@@ -58,7 +77,7 @@ pnpm build
 
 ### Introduction
 
-Bizhu is a creation and monetization platform built for Chinese web novel writers. It provides an efficient chapter editor, material library management, real-time synchronization, and other tools to help authors focus on creative writing.
+Bizhu is a creation and monetization platform built for writers. It provides an efficient chapter editor, material library management, real-time synchronization, and other tools to help authors focus on creative writing.
 
 ### Tech Stack
 
@@ -97,10 +116,29 @@ pnpm build
 
 ### Features
 
-- **Chapter Editor**: Real-time collaboration, auto-save, Markdown support
-- **Character Management**: Character cards, attributes, relationship visualization
-- **Material Library**: Foreshadowing, outlines, tags
-- **Realtime Sync**: Multi-device sync, offline editing
+#### Chapter Editor
+- Rich text editor with Markdown support
+- Real-time auto-save functionality
+- Multi-platform sync (Web, Desktop, Mobile)
+- Word count and writing progress tracking
+
+#### Character Management
+- Complete character card system (name, appearance, personality, background, tags, etc.)
+- Character relationship graph visualization
+- Character attribute editing and version control
+- Quick character search and filtering
+
+#### Material Library
+- Foreshadowing management: placement, resolution, progress tracking
+- Outline editing: chapter planning, plot outlines
+- Tag system: flexible material organization
+- Material search and relation queries
+
+#### Realtime Sync
+- Yjs-powered real-time collaborative editing
+- Automatic conflict resolution
+- Offline editing support
+- Seamless multi-device synchronization
 
 ---
 
