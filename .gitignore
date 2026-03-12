@@ -25,11 +25,6 @@ ios/
 .env.local
 .env.*.local
 
-# Project documentation (contains local context)
-CLAUDE.md
-EDITOR_TEST_CHECKLIST.md
-.claudeignore
-
 # macOS
 .DS_Store
 .AppleDouble
