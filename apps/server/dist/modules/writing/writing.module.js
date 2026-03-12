@@ -17,6 +17,10 @@ const outline_controller_1 = require("./outline.controller");
 const outline_service_1 = require("./outline.service");
 const work_controller_1 = require("./work.controller");
 const work_service_1 = require("./work.service");
+const character_controller_1 = require("./character.controller");
+const character_service_1 = require("./character.service");
+const foreshadow_controller_1 = require("./foreshadow.controller");
+const foreshadow_service_1 = require("./foreshadow.service");
 let WritingModule = class WritingModule {
 };
 exports.WritingModule = WritingModule;
@@ -28,9 +32,9 @@ exports.WritingModule = WritingModule = __decorate([
                 signOptions: { expiresIn: '24h' },
             }),
         ],
-        controllers: [chapter_controller_1.ChapterController, outline_controller_1.OutlineController, work_controller_1.WorkController],
-        providers: [chapter_service_1.ChapterService, yjs_service_1.YjsService, yjs_gateway_1.YjsGateway, outline_service_1.OutlineService, work_service_1.WorkService],
-        exports: [chapter_service_1.ChapterService, yjs_service_1.YjsService, outline_service_1.OutlineService, work_service_1.WorkService],
+        controllers: [chapter_controller_1.ChapterController, outline_controller_1.OutlineController, work_controller_1.WorkController, character_controller_1.CharacterController, foreshadow_controller_1.ForeshadowController],
+        providers: [chapter_service_1.ChapterService, yjs_service_1.YjsService, yjs_gateway_1.YjsGateway, outline_service_1.OutlineService, work_service_1.WorkService, character_service_1.CharacterService, foreshadow_service_1.ForeshadowService],
+        exports: [chapter_service_1.ChapterService, yjs_service_1.YjsService, outline_service_1.OutlineService, work_service_1.WorkService, character_service_1.CharacterService, foreshadow_service_1.ForeshadowService],
     })
 ], WritingModule);
 //# sourceMappingURL=writing.module.js.map

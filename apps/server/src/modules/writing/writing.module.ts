@@ -8,6 +8,10 @@ import { OutlineController } from './outline.controller';
 import { OutlineService } from './outline.service';
 import { WorkController } from './work.controller';
 import { WorkService } from './work.service';
+import { CharacterController } from './character.controller';
+import { CharacterService } from './character.service';
+import { ForeshadowController } from './foreshadow.controller';
+import { ForeshadowService } from './foreshadow.service';
 
 @Module({
   imports: [
@@ -16,8 +20,8 @@ import { WorkService } from './work.service';
       signOptions: { expiresIn: '24h' },
     }),
   ],
-  controllers: [ChapterController, OutlineController, WorkController],
-  providers: [ChapterService, YjsService, YjsGateway, OutlineService, WorkService],
-  exports: [ChapterService, YjsService, OutlineService, WorkService],
+  controllers: [ChapterController, OutlineController, WorkController, CharacterController, ForeshadowController],
+  providers: [ChapterService, YjsService, YjsGateway, OutlineService, WorkService, CharacterService, ForeshadowService],
+  exports: [ChapterService, YjsService, OutlineService, WorkService, CharacterService, ForeshadowService],
 })
 export class WritingModule {}

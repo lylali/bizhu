@@ -16,6 +16,7 @@ interface EditorCoreProps {
 export function EditorCore({ workId, chapterId, token, onChange }: EditorCoreProps) {
   const { editor, connectionStatus, forceSave } = useEditorInstance({
     chapterId,
+    workId,
     token,
     onChange,
   });

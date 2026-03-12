@@ -7,18 +7,23 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { useChapterStore, type SavingStatus } from '../../stores/chapterStore';
+import { CharacterMention } from './extensions/CharacterMention';
+import { useCharacterStore } from '../../stores/characterStore';
+import * as characterApi from '../../api/characterApi';
 import * as api from '../../api';
 
 export type ConnectionStatus = 'synced' | 'syncing' | 'offline';
 
 interface UseEditorOptions {
   chapterId: string;
+  workId?: string;
   token: string;
   onChange?: (content: string) => void;
 }
 
 export function useEditorInstance({
   chapterId,
+  workId,
   token,
   onChange,
 }: UseEditorOptions) {
@@ -31,6 +36,28 @@ export function useEditorInstance({
 
   // 使用 Zustand 存储
   const { currentChapter, setSavingStatus, setLastSavedAt, setSaveError } = useChapterStore();
+  const { setCharacters, setRelations } = useCharacterStore();
+
+  // 加载角色数据到全局 store
+  useEffect(() => {
+    if (!workId) return;
+
+    const loadCharacters = async () => {
+      try {
+        const [charactersResponse, relationsResponse] = await Promise.all([
+          characterApi.characterApi.getAll(workId),
+          characterApi.characterApi.getAllRelations(workId),
+        ]);
+
+        setCharacters(charactersResponse.data);
+        setRelations(relationsResponse.data);
+      } catch (error) {
+        console.error('Failed to load characters:', error);
+      }
+    };
+
+    loadCharacters();
+  }, [workId, setCharacters, setRelations]);
 
   // 手动保存函数（绕过 debounce）
   const forceSave = useCallback(async () => {
@@ -181,6 +208,7 @@ export function useEditorInstance({
     extensions: [
       StarterKit,
       CharacterCount,
+      CharacterMention,
       // Collaboration extension 用来同步编辑
       Collaboration.configure({
         document: ydoc,

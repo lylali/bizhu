@@ -92,9 +92,15 @@ model Character {
   
   // 基本信息
   name            String
-  description     String?
+  aliases         String?  // 逗号分隔的别名
+  gender          String?  // 男 | 女 | 未知
+  age             Int?     // 角色年龄
+  description     String?  // 人物背景描述
   appearance      String?  // 外貌描写
   personality     String?  // 性格描述
+  faction         String?  // 所属势力
+  notes           String?  // 备注
+  tags            String?  // JSON 格式的标签数组：["标签1", "标签2"]
   
   // 关系图布局坐标
   positionX       Float    @default(0)
@@ -183,8 +189,10 @@ model Foreshadow {
   expectedResolveChapterId String?
   expectedResolveChapter Chapter? @relation("ResolvedIn", fields: [expectedResolveChapterId], references: [id], onDelete: SetNull)
   
-  // 状态
+  // 状态和优先级
   isResolved      Boolean  @default(false)
+  priority        String?  // high | medium | low
+  notes           String?
   
   // 时间戳
   createdAt       DateTime @default(now())
