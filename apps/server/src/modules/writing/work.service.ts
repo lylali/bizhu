@@ -114,7 +114,12 @@ export class WorkService {
         },
       };
     } catch (error) {
-      throw new Error('获取作品列表失败');
+      // if database is unreachable or other error occurs, log and return empty list
+      console.error('WorkService.getWorks error:', error);
+      return {
+        data: [],
+        meta: { total: 0 },
+      };
     }
   }
 

@@ -12,6 +12,7 @@ import { CharacterController } from './character.controller';
 import { CharacterService } from './character.service';
 import { ForeshadowController } from './foreshadow.controller';
 import { ForeshadowService } from './foreshadow.service';
+import { PrismaModule } from '../../prisma/prisma.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ForeshadowService } from './foreshadow.service';
       secret: process.env.JWT_SECRET || 'your-secret-key',
       signOptions: { expiresIn: '24h' },
     }),
+    PrismaModule,
   ],
   controllers: [ChapterController, OutlineController, WorkController, CharacterController, ForeshadowController],
   providers: [ChapterService, YjsService, YjsGateway, OutlineService, WorkService, CharacterService, ForeshadowService],

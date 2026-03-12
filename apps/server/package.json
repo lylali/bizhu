@@ -16,6 +16,7 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^10.0.0",
+    "@nestjs/platform-express": "^10.4.22",
     "@prisma/client": "^5.8.0",
     "@shared": "workspace:*",
     "cache-manager": "^7.2.8",

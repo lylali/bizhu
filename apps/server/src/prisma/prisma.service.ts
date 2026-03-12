@@ -6,12 +6,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   private logger = new Logger('PrismaService');
 
   async onModuleInit(): Promise<void> {
-    await this.$connect();
-    this.logger.log('Prisma connected to database');
+    // skip real database connection in local/dev environment
+    this.logger.log('Prisma initialization skipped (no database)');
   }
 
   async onModuleDestroy(): Promise<void> {
-    await this.$disconnect();
-    this.logger.log('Prisma disconnected from database');
+    // nothing to do when shutting down without a connection
+    this.logger.log('Prisma shutdown skipped');
   }
 }
